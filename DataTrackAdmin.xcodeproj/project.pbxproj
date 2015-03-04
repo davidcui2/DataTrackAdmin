@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22371E4D1AA681CD000ACF63 /* UsageDetailInMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22371E4C1AA681CD000ACF63 /* UsageDetailInMapViewController.m */; };
 		223BB62B1AA616B900221C17 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB62A1AA616B900221C17 /* main.m */; };
 		223BB62E1AA616B900221C17 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB62D1AA616B900221C17 /* AppDelegate.m */; };
 		223BB6311AA616B900221C17 /* DataTrackAdmin.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 223BB62F1AA616B900221C17 /* DataTrackAdmin.xcdatamodeld */; };
@@ -16,6 +17,13 @@
 		223BB63C1AA616B900221C17 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 223BB63B1AA616B900221C17 /* Images.xcassets */; };
 		223BB63F1AA616B900221C17 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 223BB63D1AA616B900221C17 /* LaunchScreen.xib */; };
 		223BB64B1AA616B900221C17 /* DataTrackAdminTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB64A1AA616B900221C17 /* DataTrackAdminTests.m */; };
+		223BB6591AA618DB00221C17 /* DataStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB6581AA618DB00221C17 /* DataStorage.m */; };
+		223BB65D1AA6219100221C17 /* DeviceListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB65C1AA6219100221C17 /* DeviceListTableViewController.m */; };
+		223BB6601AA624B700221C17 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 223BB65F1AA624B700221C17 /* Device.m */; };
+		225E867B1AA64AA800BC3678 /* DatePickerForMapTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E86741AA64AA800BC3678 /* DatePickerForMapTableViewController.m */; };
+		225E867C1AA64AA800BC3678 /* GpsOnMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E86761AA64AA800BC3678 /* GpsOnMapViewController.m */; };
+		225E867D1AA64AA800BC3678 /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E86781AA64AA800BC3678 /* MapAnnotation.m */; };
+		225E867E1AA64AA800BC3678 /* MapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E867A1AA64AA800BC3678 /* MapAnnotationView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		22371E4B1AA681CD000ACF63 /* UsageDetailInMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageDetailInMapViewController.h; sourceTree = "<group>"; };
+		22371E4C1AA681CD000ACF63 /* UsageDetailInMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsageDetailInMapViewController.m; sourceTree = "<group>"; };
 		223BB6251AA616B900221C17 /* DataTrackAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataTrackAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		223BB6291AA616B900221C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223BB62A1AA616B900221C17 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -45,6 +55,20 @@
 		223BB6441AA616B900221C17 /* DataTrackAdminTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataTrackAdminTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		223BB6491AA616B900221C17 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223BB64A1AA616B900221C17 /* DataTrackAdminTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataTrackAdminTests.m; sourceTree = "<group>"; };
+		223BB6571AA618DB00221C17 /* DataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataStorage.h; sourceTree = "<group>"; };
+		223BB6581AA618DB00221C17 /* DataStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataStorage.m; sourceTree = "<group>"; };
+		223BB65B1AA6219100221C17 /* DeviceListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceListTableViewController.h; sourceTree = "<group>"; };
+		223BB65C1AA6219100221C17 /* DeviceListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceListTableViewController.m; sourceTree = "<group>"; };
+		223BB65E1AA624B700221C17 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		223BB65F1AA624B700221C17 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
+		225E86731AA64AA800BC3678 /* DatePickerForMapTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePickerForMapTableViewController.h; sourceTree = "<group>"; };
+		225E86741AA64AA800BC3678 /* DatePickerForMapTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatePickerForMapTableViewController.m; sourceTree = "<group>"; };
+		225E86751AA64AA800BC3678 /* GpsOnMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GpsOnMapViewController.h; sourceTree = "<group>"; };
+		225E86761AA64AA800BC3678 /* GpsOnMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GpsOnMapViewController.m; sourceTree = "<group>"; };
+		225E86771AA64AA800BC3678 /* MapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapAnnotation.h; sourceTree = "<group>"; };
+		225E86781AA64AA800BC3678 /* MapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotation.m; sourceTree = "<group>"; };
+		225E86791AA64AA800BC3678 /* MapAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapAnnotationView.h; sourceTree = "<group>"; };
+		225E867A1AA64AA800BC3678 /* MapAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotationView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,12 +114,11 @@
 				223BB62D1AA616B900221C17 /* AppDelegate.m */,
 				223BB6321AA616B900221C17 /* MasterViewController.h */,
 				223BB6331AA616B900221C17 /* MasterViewController.m */,
-				223BB6351AA616B900221C17 /* DetailViewController.h */,
-				223BB6361AA616B900221C17 /* DetailViewController.m */,
+				223BB65B1AA6219100221C17 /* DeviceListTableViewController.h */,
+				223BB65C1AA6219100221C17 /* DeviceListTableViewController.m */,
 				223BB6381AA616B900221C17 /* Main.storyboard */,
-				223BB63B1AA616B900221C17 /* Images.xcassets */,
-				223BB63D1AA616B900221C17 /* LaunchScreen.xib */,
-				223BB62F1AA616B900221C17 /* DataTrackAdmin.xcdatamodeld */,
+				225E867F1AA64AAD00BC3678 /* Map */,
+				223BB65A1AA618E100221C17 /* Core Data */,
 				223BB6281AA616B900221C17 /* Supporting Files */,
 			);
 			path = DataTrackAdmin;
@@ -104,8 +127,12 @@
 		223BB6281AA616B900221C17 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				223BB63B1AA616B900221C17 /* Images.xcassets */,
+				223BB63D1AA616B900221C17 /* LaunchScreen.xib */,
 				223BB6291AA616B900221C17 /* Info.plist */,
 				223BB62A1AA616B900221C17 /* main.m */,
+				223BB6351AA616B900221C17 /* DetailViewController.h */,
+				223BB6361AA616B900221C17 /* DetailViewController.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -125,6 +152,35 @@
 				223BB6491AA616B900221C17 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		223BB65A1AA618E100221C17 /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				223BB6571AA618DB00221C17 /* DataStorage.h */,
+				223BB6581AA618DB00221C17 /* DataStorage.m */,
+				223BB65E1AA624B700221C17 /* Device.h */,
+				223BB65F1AA624B700221C17 /* Device.m */,
+				223BB62F1AA616B900221C17 /* DataTrackAdmin.xcdatamodeld */,
+			);
+			name = "Core Data";
+			sourceTree = "<group>";
+		};
+		225E867F1AA64AAD00BC3678 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				225E86731AA64AA800BC3678 /* DatePickerForMapTableViewController.h */,
+				225E86741AA64AA800BC3678 /* DatePickerForMapTableViewController.m */,
+				225E86751AA64AA800BC3678 /* GpsOnMapViewController.h */,
+				225E86761AA64AA800BC3678 /* GpsOnMapViewController.m */,
+				225E86771AA64AA800BC3678 /* MapAnnotation.h */,
+				225E86781AA64AA800BC3678 /* MapAnnotation.m */,
+				225E86791AA64AA800BC3678 /* MapAnnotationView.h */,
+				225E867A1AA64AA800BC3678 /* MapAnnotationView.m */,
+				22371E4B1AA681CD000ACF63 /* UsageDetailInMapViewController.h */,
+				22371E4C1AA681CD000ACF63 /* UsageDetailInMapViewController.m */,
+			);
+			name = Map;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +232,7 @@
 				TargetAttributes = {
 					223BB6241AA616B900221C17 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 5QB7973RVT;
 					};
 					223BB6431AA616B900221C17 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -228,10 +285,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				223BB6371AA616B900221C17 /* DetailViewController.m in Sources */,
+				22371E4D1AA681CD000ACF63 /* UsageDetailInMapViewController.m in Sources */,
 				223BB6341AA616B900221C17 /* MasterViewController.m in Sources */,
+				225E867B1AA64AA800BC3678 /* DatePickerForMapTableViewController.m in Sources */,
 				223BB62E1AA616B900221C17 /* AppDelegate.m in Sources */,
+				223BB6601AA624B700221C17 /* Device.m in Sources */,
 				223BB62B1AA616B900221C17 /* main.m in Sources */,
+				223BB65D1AA6219100221C17 /* DeviceListTableViewController.m in Sources */,
+				225E867D1AA64AA800BC3678 /* MapAnnotation.m in Sources */,
 				223BB6311AA616B900221C17 /* DataTrackAdmin.xcdatamodeld in Sources */,
+				223BB6591AA618DB00221C17 /* DataStorage.m in Sources */,
+				225E867E1AA64AA800BC3678 /* MapAnnotationView.m in Sources */,
+				225E867C1AA64AA800BC3678 /* GpsOnMapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,7 +420,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = DataTrackAdmin/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -365,7 +432,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = DataTrackAdmin/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -424,6 +493,7 @@
 				223BB6501AA616B900221C17 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		223BB6511AA616B900221C17 /* Build configuration list for PBXNativeTarget "DataTrackAdminTests" */ = {
 			isa = XCConfigurationList;
@@ -432,6 +502,7 @@
 				223BB6531AA616B900221C17 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
