@@ -61,11 +61,13 @@
             break;
         case 3:
             cell.textLabel.text = @"WiFi Sent";
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ bytes",_dataToDisplay.wifiSent];
+            long wifiSent = _dataToDisplay.wifiSent.intValue < 0 ? _dataToDisplay.wifiSent.intValue + (int)pow(2, 32) : _dataToDisplay.wifiSent.intValue;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%li bytes",wifiSent];
             break;
         case 4:
             cell.textLabel.text = @"WiFi Received";
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ bytes",_dataToDisplay.wifiReceived];
+            long wifiReceived = _dataToDisplay.wifiReceived.intValue < 0 ? _dataToDisplay.wifiReceived.intValue + (int)pow(2, 32) : _dataToDisplay.wifiReceived.intValue;
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%li bytes",wifiReceived];
             break;
         case 5:
             cell.textLabel.text = @"WWAN Sent";
