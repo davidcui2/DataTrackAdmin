@@ -8,6 +8,7 @@
 
 #import "MasterViewController.h"
 #import "DeviceListTableViewController.h"
+#import "SettingsViewController.h"
 
 @interface MasterViewController ()
 
@@ -73,6 +74,9 @@
         controller.choiceInMasterView = indexPath.row;
         controller.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
         controller.navigationItem.leftItemsSupplementBackButton = YES;
+    }
+    else if ([[segue identifier] isEqualToString:@"showSettings"]) {
+        [[segue destinationViewController]setManagedObjectContext:self.managedObjectContext];
     }
 }
 

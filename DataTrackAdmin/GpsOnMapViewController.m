@@ -11,11 +11,25 @@
 #import "MapAnnotationView.h"
 #import "UsageDetailInMapViewController.h"
 
-@interface GpsOnMapViewController ()
+#import "CCHMapClusterAnnotation.h"
+#import "CCHMapClusterController.h"
+#import "CCHMapClusterControllerDelegate.h"
+#import "CCHCenterOfMassMapClusterer.h"
+#import "CCHNearCenterMapClusterer.h"
+#import "CCHFadeInOutMapAnimator.h"
+#import "ClusterAnnotationView.h"
+
+@interface GpsOnMapViewController () <MKMapViewDelegate,CCHMapClusterControllerDelegate>
 
 @property MKUserLocation *userCurrentLocation;
 
 @property (nonatomic, retain) NSMutableArray * allAnnotations;
+
+@property (nonatomic) CCHMapClusterController *mapClusterControllerRed;
+@property (nonatomic) CCHMapClusterController *mapClusterControllerBlue;
+@property (nonatomic) NSUInteger count;
+@property (nonatomic) id<CCHMapClusterer> mapClusterer;
+@property (nonatomic) id<CCHMapAnimator> mapAnimator;
 
 @end
 
@@ -26,15 +40,47 @@ bool noDataFound = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _mapView.showsUserLocation = YES;
+//    _mapView.showsUserLocation = YES;
     _mapView.delegate = self;
     
     [self drawAnnotationFromLocalData];
+    
+    // Set up map clustering
+    self.mapClusterControllerRed = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
+    self.mapClusterControllerRed.delegate = self;
+    
+    [self initMapClusterSettings];
+    
+    [self.mapClusterControllerRed addAnnotations:_allAnnotations withCompletionHandler:NULL];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void) initMapClusterSettings
+{
+    self.count = 0;
+
+    self.mapClusterControllerRed.cellSize = 60;
+    self.mapClusterControllerRed.marginFactor = 0.5;
+    
+    self.mapClusterer = [[CCHCenterOfMassMapClusterer alloc]init];
+//    self.mapClusterer = [[CCHNearCenterMapClusterer alloc] init];
+    
+    self.mapClusterControllerRed.clusterer = self.mapClusterer;
+    self.mapClusterControllerRed.maxZoomLevelForClustering = 16;
+    self.mapClusterControllerRed.minUniqueLocationsForClustering = 3;
+    
+    self.mapAnimator = [[CCHFadeInOutMapAnimator alloc]init];
+    self.mapClusterControllerRed.animator = self.mapAnimator;
+    
+    // Remove all current items from the map
+    [self.mapView removeAnnotations:self.mapView.annotations];
+    for (id<MKOverlay> overlay in self.mapView.overlays) {
+        [self.mapView removeOverlay:overlay];
+    }
 }
 
 - (void)drawAnnotationFromLocalData
@@ -63,11 +109,15 @@ bool noDataFound = 0;
             NSLog(@"Device ID: %@.Number of data given the chosen date: %lu", deviceID, (unsigned long)[dataReturn count]);
             
             for (DataStorage * dt in dataReturn) {
+//                MKPointAnnotation *mapAnnotation = [[MKPointAnnotation alloc] init];
+//                mapAnnotation.coordinate = CLLocationCoordinate2DMake([dt.gpsLatitude doubleValue], [dt.gpsLongitude doubleValue]);
+//                mapAnnotation.title = [deviceID stringValue];
+                
                 MapAnnotation *mapAnnotation = [[MapAnnotation alloc]initWithLocation:CLLocationCoordinate2DMake([dt.gpsLatitude doubleValue], [dt.gpsLongitude doubleValue])];
                 mapAnnotation.dataStorage = dt;
                 NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
                 [formatter setDateFormat:@"Y-M-d H:mm:s"];
-                mapAnnotation.title = [NSString stringWithFormat:@"Time: %@", [formatter stringFromDate:dt.timeStamp]];
+                mapAnnotation.title = [deviceID stringValue]; //[NSString stringWithFormat:@"Time: %@", [formatter stringFromDate:dt.timeStamp]];
                 if (lastDate == nil) {
                     mapAnnotation.subTitle = [NSString stringWithFormat:@"Device ID: %@. This is the first point in database.",deviceID];
                 }
@@ -126,14 +176,50 @@ bool noDataFound = 0;
     location.longitude = (longitudeMax + longitudeMin) / 2;
     region.span = span;
     region.center = location;
-    
-    //    // Add a annotation at the span centre
-    //    MapAnnotation *mapAnnotation = [[MapAnnotation alloc]initWithLocation:location];
-    //    [_mapView addAnnotation:mapAnnotation];
-    
-    [_mapView addAnnotations:_allAnnotations];
-    
+//
+//    //    // Add a annotation at the span centre
+//    //    MapAnnotation *mapAnnotation = [[MapAnnotation alloc]initWithLocation:location];
+//    //    [_mapView addAnnotation:mapAnnotation];
+//    
+//    [_mapView addAnnotations:_allAnnotations];
+//    
     [_mapView setRegion:region animated:YES];
+}
+
+#pragma mark Cluster Controller
+
+- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController titleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
+{
+    NSUInteger numAnnotations = mapClusterAnnotation.annotations.count;
+    NSString *unit = numAnnotations > 1 ? @"annotations" : @"annotation";
+    return [NSString stringWithFormat:@"%tu %@", numAnnotations, unit];
+}
+
+- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController subtitleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
+{
+//    NSUInteger numAnnotations = MIN(mapClusterAnnotation.annotations.count, 5);
+//    NSArray *annotations = [mapClusterAnnotation.annotations.allObjects subarrayWithRange:NSMakeRange(0, numAnnotations)];
+//    NSArray *titles = [annotations valueForKey:@"title"];
+    
+    // Get the device ID from the same cluster
+    NSArray * a = [mapClusterAnnotation.annotations.allObjects valueForKey:@"title"];
+    NSMutableArray * unique = [NSMutableArray array];
+    NSMutableSet * processed = [NSMutableSet set];
+    for (NSString * string in a) {
+        if ([processed containsObject:string] == NO) {
+            [unique addObject:string];
+            [processed addObject:string];
+        }
+    }
+//    return [titles componentsJoinedByString:@", "];
+    return [NSString stringWithFormat:@"Device ID: %@",[unique componentsJoinedByString:@", "]];
+}
+
+- (void)mapClusterController:(CCHMapClusterController *)mapClusterController willReuseMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
+{
+    ClusterAnnotationView *clusterAnnotationView = (ClusterAnnotationView *)[self.mapView viewForAnnotation:mapClusterAnnotation];
+    clusterAnnotationView.count = mapClusterAnnotation.annotations.count;
+    clusterAnnotationView.uniqueLocation = mapClusterAnnotation.isUniqueLocation;
 }
 
 #pragma mark - Core Data Methods
@@ -165,24 +251,24 @@ bool noDataFound = 0;
     return data;
 }
 
-#pragma mark - Map View Delegate
-
-- (void)mapView:(MKMapView *)aMapView didUpdateUserLocation:(MKUserLocation *)aUserLocation {
-    self.userCurrentLocation = aUserLocation;
-    
-    if (noDataFound) {
-        MKCoordinateRegion region;
-        MKCoordinateSpan span;
-        span.latitudeDelta = 0.05;
-        span.longitudeDelta = 0.05;
-        CLLocationCoordinate2D location;
-        location.latitude = _userCurrentLocation.coordinate.latitude;
-        location.longitude = _userCurrentLocation.coordinate.longitude;
-        region.span = span;
-        region.center = location;
-        [_mapView setRegion:region animated:YES];
-    }
-}
+//#pragma mark - Map View Delegate
+//
+//- (void)mapView:(MKMapView *)aMapView didUpdateUserLocation:(MKUserLocation *)aUserLocation {
+//    self.userCurrentLocation = aUserLocation;
+//    
+//    if (noDataFound) {
+//        MKCoordinateRegion region;
+//        MKCoordinateSpan span;
+//        span.latitudeDelta = 0.05;
+//        span.longitudeDelta = 0.05;
+//        CLLocationCoordinate2D location;
+//        location.latitude = _userCurrentLocation.coordinate.latitude;
+//        location.longitude = _userCurrentLocation.coordinate.longitude;
+//        region.span = span;
+//        region.center = location;
+//        [_mapView setRegion:region animated:YES];
+//    }
+//}
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
 {
@@ -191,7 +277,7 @@ bool noDataFound = 0;
         if ([annotation isKindOfClass:[MKUserLocation class]])
             return nil;
         
-        // Handle any custom annotations.
+//        // Handle any custom annotations.
         if ([annotation isKindOfClass:[MapAnnotation class]])
         {
             
@@ -223,6 +309,24 @@ bool noDataFound = 0;
             
             return pinView;
         }
+        else if ([annotation isKindOfClass:CCHMapClusterAnnotation.class]) {
+            static NSString *identifier = @"clusterAnnotation";
+            
+            ClusterAnnotationView *clusterAnnotationView = (ClusterAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
+            if (clusterAnnotationView) {
+                clusterAnnotationView.annotation = annotation;
+            } else {
+                clusterAnnotationView = [[ClusterAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
+                clusterAnnotationView.canShowCallout = YES;
+            }
+            
+            CCHMapClusterAnnotation *clusterAnnotation = (CCHMapClusterAnnotation *)annotation;
+            clusterAnnotationView.count = clusterAnnotation.annotations.count;
+            clusterAnnotationView.blue = (clusterAnnotation.mapClusterController == self.mapClusterControllerBlue);
+            clusterAnnotationView.uniqueLocation = clusterAnnotation.isUniqueLocation;
+            return clusterAnnotationView;
+        }
+
         
         return nil;
     }

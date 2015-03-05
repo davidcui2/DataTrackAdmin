@@ -12,7 +12,7 @@
 #import <CoreData/CoreData.h>
 #import "DataStorage.h"
 
-@interface GpsOnMapViewController : UIViewController <MKMapViewDelegate>
+@interface GpsOnMapViewController : UIViewController 
 
 @property (nonatomic,strong) NSManagedObjectContext* managedObjectContext;
 

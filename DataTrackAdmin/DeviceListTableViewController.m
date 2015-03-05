@@ -266,6 +266,7 @@
 
 - (void) finishSelectDevices
 {
+    if ([_cellSelected count] == 0) return;
     [self performSegueWithIdentifier:@"finishSelectDevices" sender:nil];
 }
 
