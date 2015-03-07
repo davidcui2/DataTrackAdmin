@@ -386,14 +386,14 @@ bool noDataFound = 0;
         [vc setNumberOfPoints:[[(CCHMapClusterAnnotation*)sender annotations]count]];
         [vc setUniqueIdNumber:[(CCHMapClusterAnnotation*)sender uniqueIdNumber]];
         // Calculate average
-        long aWifiSent = 0, aWifiReceived = 0, aWwanSent = 0, aWwanReceived = 0;
+        double aWifiSent = 0, aWifiReceived = 0, aWwanSent = 0, aWwanReceived = 0;
         BOOL containStartPoint = false;
         for (MapAnnotation* annotation in ((CCHMapClusterAnnotation*)sender).annotations.allObjects) {
             if (annotation.averageDataUsage == nil) {
                 containStartPoint = 1;
             }
             else {
-                NSLog(@"WFR:@%@, WFS:%@, WWR:%@, WWS:%@",annotation.averageDataUsage[0],annotation.averageDataUsage[1],annotation.averageDataUsage[2],annotation.averageDataUsage[3]);
+//                NSLog(@"WFR:@%@, WFS:%@, WWR:%@, WWS:%@",annotation.averageDataUsage[0],annotation.averageDataUsage[1],annotation.averageDataUsage[2],annotation.averageDataUsage[3]);
                 aWifiReceived += [(NSNumber*)annotation.averageDataUsage[0] longValue];
                 aWifiSent += [(NSNumber*)annotation.averageDataUsage[1] longValue];
                 aWwanReceived += [(NSNumber*)annotation.averageDataUsage[2] longValue];
@@ -414,7 +414,7 @@ bool noDataFound = 0;
             aWwanSent = aWwanSent / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]);
         }
         
-        NSLog(@"aWFR:@%li, aWFS:%li, aWWR:%li, aWWS:%li",aWifiReceived,aWifiSent,aWwanReceived,aWwanSent);
+        NSLog(@"aWFR:@%.2f, aWFS:%.2f, aWWR:%.2f, aWWS:%.2f",aWifiReceived,aWifiSent,aWwanReceived,aWwanSent);
         [vc setAverageDataUsage:[NSArray arrayWithObjects:
                                  [NSNumber numberWithFloat:aWifiReceived],[NSNumber numberWithFloat:aWifiSent],
                                  [NSNumber numberWithFloat:aWwanReceived],[NSNumber numberWithFloat:aWwanSent], nil]];
