@@ -272,10 +272,13 @@
 
 - (void) finishSelectFetchDevices
 {
-    UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc]     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    activityView.center=self.view.center;
-    [activityView startAnimating];
-    [self.view addSubview:activityView];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    spinner.center = self.view.center;
+    spinner.color = [UIColor orangeColor];
+    spinner.hidesWhenStopped = YES;
+    [self.view addSubview:spinner];
+    [self.view bringSubviewToFront:spinner];
+    [spinner startAnimating];;
     
     NSString* fullAddress;
     // For each selected
@@ -291,7 +294,7 @@
             NSLog(@"%@",getError);
         }
         NSString *theReply = [[NSString alloc] initWithBytes:[GETReply bytes] length:[GETReply length] encoding: NSASCIIStringEncoding];
-        NSLog(@"Reply: %@", [theReply substringToIndex:100]);
+//        NSLog(@"Reply: %@", [theReply substringToIndex:100]);
         if ([theReply isEqualToString:@"null"]) {
         }
         else {
@@ -301,8 +304,7 @@
         }
     }
     
-    [activityView stopAnimating];
-    activityView = nil;
+    [spinner stopAnimating];
 }
 
 - (void) setChoiceInMasterView:(NSInteger)choiceInMasterView

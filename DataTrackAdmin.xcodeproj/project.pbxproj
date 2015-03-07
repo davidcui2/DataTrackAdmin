@@ -37,6 +37,7 @@
 		225E867C1AA64AA800BC3678 /* GpsOnMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E86761AA64AA800BC3678 /* GpsOnMapViewController.m */; };
 		225E867D1AA64AA800BC3678 /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E86781AA64AA800BC3678 /* MapAnnotation.m */; };
 		225E867E1AA64AA800BC3678 /* MapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 225E867A1AA64AA800BC3678 /* MapAnnotationView.m */; };
+		228D307D1AA8AF540035E6BC /* UsageStatsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228D307C1AA8AF540035E6BC /* UsageStatsTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +112,8 @@
 		225E86781AA64AA800BC3678 /* MapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotation.m; sourceTree = "<group>"; };
 		225E86791AA64AA800BC3678 /* MapAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapAnnotationView.h; sourceTree = "<group>"; };
 		225E867A1AA64AA800BC3678 /* MapAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotationView.m; sourceTree = "<group>"; };
+		228D307B1AA8AF540035E6BC /* UsageStatsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsageStatsTableViewController.h; sourceTree = "<group>"; };
+		228D307C1AA8AF540035E6BC /* UsageStatsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsageStatsTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +261,8 @@
 				22371E741AA69B6A000ACF63 /* ClusterAnnotationView.m */,
 				22371E4B1AA681CD000ACF63 /* UsageDetailInMapViewController.h */,
 				22371E4C1AA681CD000ACF63 /* UsageDetailInMapViewController.m */,
+				228D307B1AA8AF540035E6BC /* UsageStatsTableViewController.h */,
+				228D307C1AA8AF540035E6BC /* UsageStatsTableViewController.m */,
 			);
 			name = Map;
 			sourceTree = "<group>";
@@ -384,6 +389,7 @@
 				22371E6E1AA69815000ACF63 /* CCHMapClusterOperation.m in Sources */,
 				223BB6591AA618DB00221C17 /* DataStorage.m in Sources */,
 				22371E711AA69815000ACF63 /* CCHMapViewDelegateProxy.m in Sources */,
+				228D307D1AA8AF540035E6BC /* UsageStatsTableViewController.m in Sources */,
 				225E867E1AA64AA800BC3678 /* MapAnnotationView.m in Sources */,
 				22371E6A1AA69815000ACF63 /* CCHMapClusterAnnotation.m in Sources */,
 				225E867C1AA64AA800BC3678 /* GpsOnMapViewController.m in Sources */,

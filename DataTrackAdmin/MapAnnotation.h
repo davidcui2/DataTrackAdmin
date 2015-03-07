@@ -21,6 +21,9 @@
 - (id)initWithLocation:(CLLocationCoordinate2D)coord;
 
 
+- (void) setOverallStatsWithAverageWifiSent:(NSNumber*)aWifiSent wifiReceived:(NSNumber*)aWifiReceived wwanSent:(NSNumber*)aWwanSent wwanReceived:(NSNumber*)aWwanReceived;
+@property (nonatomic, strong) NSArray * averageDataUsage;
+
 @property (nonatomic, copy) NSString *title;
 
 @property (nonatomic, copy) NSString *subTitle;

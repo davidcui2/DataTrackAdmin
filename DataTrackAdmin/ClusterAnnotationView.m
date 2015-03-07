@@ -81,18 +81,19 @@
         countLabelFrame = frame;
     } else {
         NSString *suffix;
-        if (self.count > 1000) {
+//        if (self.count > 1000) {
+//            suffix = @"39";
+//        } else if (self.count > 500) {
+//            suffix = @"38";
+//        } else if (self.count > 200) {
+//            suffix = @"36";
+//        } else if (self.count > 100) {
+//            suffix = @"34";
+//        } else
+        if (self.count > 50) {
             suffix = @"39";
-        } else if (self.count > 500) {
-            suffix = @"38";
-        } else if (self.count > 200) {
-            suffix = @"36";
-        } else if (self.count > 100) {
-            suffix = @"34";
-        } else if (self.count > 50) {
-            suffix = @"31";
         } else if (self.count > 20) {
-            suffix = @"28";
+            suffix = @"31";
         } else if (self.count > 10) {
             suffix = @"25";
         } else if (self.count > 5) {

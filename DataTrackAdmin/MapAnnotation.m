@@ -8,6 +8,10 @@
 
 #import "MapAnnotation.h"
 
+@interface MapAnnotation ()
+
+@end
+
 @implementation MapAnnotation
 
 @synthesize coordinate = _coordinate;
@@ -26,6 +30,10 @@
 
 - (NSString *)subtitle{
     return _subTitle;
+}
+
+-(void)setOverallStatsWithAverageWifiSent:(NSNumber *)aWifiSent wifiReceived:(NSNumber *)aWifiReceived wwanSent:(NSNumber *)aWwanSent wwanReceived:(NSNumber *)aWwanReceived {
+    _averageDataUsage = [NSArray arrayWithObjects:aWifiReceived, aWifiSent, aWwanReceived, aWwanSent, nil];
 }
 
 @end

@@ -74,6 +74,13 @@
         controller.choiceInMasterView = indexPath.row;
         controller.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
         controller.navigationItem.leftItemsSupplementBackButton = YES;
+        
+        if (indexPath.row == 0) {
+            controller.title = @"Select devices to show";
+        }
+        else {
+            controller.title = @"Fetch data";
+        }
     }
     else if ([[segue identifier] isEqualToString:@"showSettings"]) {
         [[segue destinationViewController]setManagedObjectContext:self.managedObjectContext];

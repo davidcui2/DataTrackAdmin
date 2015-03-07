@@ -58,4 +58,7 @@
 /** The area that includes all annotations. */
 - (MKMapRect)mapRect;
 
+/** Unique device id */
+@property NSUInteger uniqueIdNumber;
+
 @end

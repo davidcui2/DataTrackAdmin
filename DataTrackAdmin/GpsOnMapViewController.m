@@ -10,6 +10,7 @@
 #import "MapAnnotation.h"
 #import "MapAnnotationView.h"
 #import "UsageDetailInMapViewController.h"
+#import "UsageStatsTableViewController.h"
 
 #import "CCHMapClusterAnnotation.h"
 #import "CCHMapClusterController.h"
@@ -99,19 +100,24 @@ bool noDataFound = 0;
         NSArray *dataReturn = [self getCoreDataWithDeviceID:deviceID];
         
         NSDate * lastDate = nil;
-        double amountDataUsed = 0;
+        long amountDataUsed = 0;
+        long lastWifiSent=0, lastWifiReceived=0, lastWwanReceived=0, lastWwanSent=0;
         CLLocationCoordinate2D lastCoord;
         
+        
         if ([dataReturn count]>0) {
+            MapAnnotation *lastAnnotation;
             
             noDataFound = 0;
             
             NSLog(@"Device ID: %@.Number of data given the chosen date: %lu", deviceID, (unsigned long)[dataReturn count]);
             
             for (DataStorage * dt in dataReturn) {
-//                MKPointAnnotation *mapAnnotation = [[MKPointAnnotation alloc] init];
-//                mapAnnotation.coordinate = CLLocationCoordinate2DMake([dt.gpsLatitude doubleValue], [dt.gpsLongitude doubleValue]);
-//                mapAnnotation.title = [deviceID stringValue];
+                // In case of data overflow int 32
+                long wifiSent = [dt.wifiSent intValue] > 0 ? [dt.wifiSent intValue] : [dt.wifiSent longValue] + (int)pow(2, 32);
+                long wifiReceived = [dt.wifiReceived intValue] > 0 ? [dt.wifiReceived intValue] : (long)[dt.wifiReceived intValue] + (long)pow(2, 32);
+                long wwanSent = [dt.wwanSent longValue];
+                long wwanReceived = [dt.wwanReceived longValue];
                 
                 MapAnnotation *mapAnnotation = [[MapAnnotation alloc]initWithLocation:CLLocationCoordinate2DMake([dt.gpsLatitude doubleValue], [dt.gpsLongitude doubleValue])];
                 mapAnnotation.dataStorage = dt;
@@ -119,38 +125,70 @@ bool noDataFound = 0;
                 [formatter setDateFormat:@"Y-M-d H:mm:s"];
                 mapAnnotation.title = [deviceID stringValue]; //[NSString stringWithFormat:@"Time: %@", [formatter stringFromDate:dt.timeStamp]];
                 if (lastDate == nil) {
-                    mapAnnotation.subTitle = [NSString stringWithFormat:@"Device ID: %@. This is the first point in database.",deviceID];
+                    mapAnnotation.subTitle = [NSString stringWithFormat:@"Device ID: %@. This is the last point in the section.",deviceID];
+                    
+                    [mapAnnotation setAverageDataUsage:nil];
                 }
                 else{
                     NSString *amountData, *distanceTravelled, *timeTravelled;
                     
-                    int timeInterval = (int)[dt.timeStamp timeIntervalSinceDate:lastDate];
-                    timeTravelled = [NSString stringWithFormat:@"%i min %i s",(timeInterval/60),(timeInterval%60)];
+                    // Time Difference
+                    int timeInterval = (int)[lastDate timeIntervalSinceDate:dt.timeStamp];
+                    if (timeInterval > 3600) {
+                        int hr = timeInterval/3600;
+                        int min = (timeInterval - hr * 3600)/60;
+                        timeTravelled = [NSString stringWithFormat:@"%i hr %i min", hr, min];
+                        
+                    }
+                    else {
+                        timeTravelled = [NSString stringWithFormat:@"%i min %i s",(timeInterval/60),(timeInterval%60)];
+                    }
                     
+                    // Distance Difference
                     distanceTravelled = [NSString stringWithFormat:@"%.f m",[[[CLLocation alloc]initWithLatitude:lastCoord.latitude longitude:lastCoord.longitude] distanceFromLocation:[[CLLocation alloc]initWithLatitude:[dt.gpsLatitude doubleValue] longitude:[dt.gpsLongitude doubleValue]]]];
                     
-                    double amountDataNow  = [dt.wifiReceived doubleValue] + [dt.wifiSent doubleValue] + [dt.wwanSent doubleValue] + [dt.wwanReceived doubleValue];
+                    // Data Usage (difference calculated saperatedly, for usageStatsTableView)
+                        // Consider the reboot data refresh
+                    NSNumber * awifiR = lastWifiReceived >= wifiReceived ? [NSNumber numberWithFloat:((double)(lastWifiReceived - wifiReceived))/timeInterval] : [NSNumber numberWithFloat:((double)lastWifiReceived)/timeInterval] ;
+                    NSNumber * awifiS = lastWifiSent >= wifiSent ? [NSNumber numberWithFloat:((double)(lastWifiSent - wifiSent))/timeInterval] : [NSNumber numberWithFloat:((double)lastWifiSent)/timeInterval];
+                    NSNumber * awwanR =lastWwanReceived >= wwanReceived ? [NSNumber numberWithFloat:((double)(lastWwanReceived - wwanReceived))/timeInterval] : [NSNumber numberWithFloat:((double)lastWwanReceived)/timeInterval];
+                    NSNumber * awwanS = lastWwanSent >= wwanSent ? [NSNumber numberWithFloat:((double)(lastWwanSent - wwanSent))/timeInterval] : [NSNumber numberWithFloat:((double)lastWwanSent)/timeInterval];
+                    if (awwanR.doubleValue > 1e7) {
+                        NSLog(@"%@",dt);
+                        NSLog(@"Error");
+                    }
                     
-                    amountDataUsed = amountDataNow < amountDataUsed ? amountDataNow : amountDataNow - amountDataUsed;
+                    [mapAnnotation setAverageDataUsage:[NSArray arrayWithObjects:awifiR,awifiS,awwanR,awwanS,nil]];
+                    
+                    // Data Usage (difference in all)
+                    long amountDataNow  =  wifiReceived+ wifiSent + wwanSent + wwanReceived;
+                    
+                    amountDataUsed = amountDataNow > amountDataUsed ? amountDataUsed : amountDataUsed - amountDataNow;
                     
                     amountData = [NSString stringWithFormat:@"%i Kb", (int)amountDataUsed/1000];
                     
-                    mapAnnotation.subTitle = [NSString stringWithFormat:@"Device ID: %@. Used %@ in the past %@ during %@.",deviceID,amountData, distanceTravelled, timeTravelled];
+                    mapAnnotation.subTitle = [NSString stringWithFormat:@"Used %@ in the past %@ during %@.",amountData, distanceTravelled, timeTravelled];
+                    
                 }
                 
-                amountDataUsed = [dt.wwanReceived doubleValue] + [dt.wwanSent doubleValue] + [dt.wifiReceived doubleValue]+ [dt.wifiSent doubleValue];
+                lastWifiSent = wifiSent;
+                lastWifiReceived = wifiReceived;
+                lastWwanSent = wwanSent;
+                lastWwanReceived = wwanReceived;
+                
+                amountDataUsed = lastWifiSent + lastWifiReceived + lastWwanSent + lastWwanReceived;
                 lastCoord = CLLocationCoordinate2DMake([dt.gpsLatitude doubleValue], [dt.gpsLongitude doubleValue]);
                 lastDate = dt.timeStamp;
                 
                 [_allAnnotations addObject:mapAnnotation];
                 
-    //            [_mapView addAnnotation:mapAnnotation];
                 latitudeMax = [dt.gpsLatitude doubleValue]>latitudeMax ? [dt.gpsLatitude doubleValue] : latitudeMax;
                 latitudeMin = [dt.gpsLatitude doubleValue]<latitudeMin ? [dt.gpsLatitude doubleValue] : latitudeMin;
                 longitudeMax = [dt.gpsLongitude doubleValue]>longitudeMax ? [dt.gpsLongitude doubleValue] : longitudeMax;
                 longitudeMin = [dt.gpsLongitude doubleValue]<longitudeMin ? [dt.gpsLongitude doubleValue] : longitudeMin;
             }
-
+            
+            lastAnnotation = nil;
         }
         else
         {
@@ -191,28 +229,37 @@ bool noDataFound = 0;
 - (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController titleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
 {
     NSUInteger numAnnotations = mapClusterAnnotation.annotations.count;
-    NSString *unit = numAnnotations > 1 ? @"annotations" : @"annotation";
-    return [NSString stringWithFormat:@"%tu %@", numAnnotations, unit];
+    if (numAnnotations > 1) {
+//        NSString *unit = numAnnotations > 1 ? @"annotations" : @"annotation";
+        NSString *unit = @"data points";
+        return [NSString stringWithFormat:@"%tu %@", numAnnotations, unit];
+    }
+    else {
+        return [NSString stringWithFormat:@"Device ID: %@", ((MapAnnotation*)mapClusterAnnotation.annotations.allObjects.firstObject).title];
+    }
 }
 
 - (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController subtitleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
 {
-//    NSUInteger numAnnotations = MIN(mapClusterAnnotation.annotations.count, 5);
-//    NSArray *annotations = [mapClusterAnnotation.annotations.allObjects subarrayWithRange:NSMakeRange(0, numAnnotations)];
-//    NSArray *titles = [annotations valueForKey:@"title"];
-    
-    // Get the device ID from the same cluster
-    NSArray * a = [mapClusterAnnotation.annotations.allObjects valueForKey:@"title"];
-    NSMutableArray * unique = [NSMutableArray array];
-    NSMutableSet * processed = [NSMutableSet set];
-    for (NSString * string in a) {
-        if ([processed containsObject:string] == NO) {
-            [unique addObject:string];
-            [processed addObject:string];
+    NSUInteger numAnnotations = mapClusterAnnotation.annotations.count;
+    if (numAnnotations > 1) {
+        // Get the device ID from the same cluster
+        NSArray * a = [mapClusterAnnotation.annotations.allObjects valueForKey:@"title"];
+        NSMutableArray * unique = [NSMutableArray array];
+        NSMutableSet * processed = [NSMutableSet set];
+        for (NSString * string in a) {
+            if ([processed containsObject:string] == NO) {
+                [unique addObject:string];
+                [processed addObject:string];
+            }
         }
+        mapClusterAnnotation.uniqueIdNumber = [unique count];
+        return [NSString stringWithFormat:@"Device ID: %@",[unique componentsJoinedByString:@", "]];
     }
-//    return [titles componentsJoinedByString:@", "];
-    return [NSString stringWithFormat:@"Device ID: %@",[unique componentsJoinedByString:@", "]];
+    else {
+        mapClusterAnnotation.uniqueIdNumber = 1;
+        return ((MapAnnotation*)mapClusterAnnotation.annotations.allObjects.firstObject).subTitle;
+    }
 }
 
 - (void)mapClusterController:(CCHMapClusterController *)mapClusterController willReuseMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
@@ -239,7 +286,7 @@ bool noDataFound = 0;
         [allData setPredicate:[NSPredicate predicateWithFormat:[NSString stringWithFormat:@"generatedBy.deviceID = %@",[deviceID stringValue]]]];
     }
     
-    NSSortDescriptor *sortDate = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:YES];
+    NSSortDescriptor *sortDate = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:NO];
     [allData setSortDescriptors:@[sortDate]];
     
     NSError * error = nil;
@@ -251,7 +298,7 @@ bool noDataFound = 0;
     return data;
 }
 
-//#pragma mark - Map View Delegate
+#pragma mark - Map View Delegate
 //
 //- (void)mapView:(MKMapView *)aMapView didUpdateUserLocation:(MKUserLocation *)aUserLocation {
 //    self.userCurrentLocation = aUserLocation;
@@ -277,39 +324,9 @@ bool noDataFound = 0;
         if ([annotation isKindOfClass:[MKUserLocation class]])
             return nil;
         
-//        // Handle any custom annotations.
-        if ([annotation isKindOfClass:[MapAnnotation class]])
-        {
+        if ([annotation isKindOfClass:CCHMapClusterAnnotation.class]) {
+            CCHMapClusterAnnotation *CCHannotation = (CCHMapClusterAnnotation*)annotation;
             
-            
-            // Try to dequeue an existing pin view first.
-            MapAnnotationView*    pinView = (MapAnnotationView*)[mapView
-                                                                 dequeueReusableAnnotationViewWithIdentifier:@"CustomPinAnnotationView"];
-            
-            if (!pinView)
-            {
-                // If an existing pin view was not available, create one.
-                pinView = [[MapAnnotationView alloc] initWithAnnotation:annotation
-                                                        reuseIdentifier:@"CustomPinAnnotationView"];
-                pinView.pinColor = MKPinAnnotationColorRed;
-                pinView.animatesDrop = NO;
-                pinView.canShowCallout = YES;
-                
-                // If appropriate, customize the callout by adding accessory views (code not shown).
-                UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-                [rightButton addTarget:nil action:nil forControlEvents:UIControlEventTouchUpInside];
-                pinView.rightCalloutAccessoryView = rightButton;
-                //                [rightButton addObserver:self
-                //                          forKeyPath:@"selected"
-                //                             options:NSKeyValueObservingOptionNew
-                //                             context:@"ANSELECTED"];
-            }
-            else
-                pinView.annotation = annotation;
-            
-            return pinView;
-        }
-        else if ([annotation isKindOfClass:CCHMapClusterAnnotation.class]) {
             static NSString *identifier = @"clusterAnnotation";
             
             ClusterAnnotationView *clusterAnnotationView = (ClusterAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:identifier];
@@ -319,6 +336,14 @@ bool noDataFound = 0;
                 clusterAnnotationView = [[ClusterAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
                 clusterAnnotationView.canShowCallout = YES;
             }
+            
+//            if (CCHannotation.isCluster) {
+//                clusterAnnotationView.rightCalloutAccessoryView = nil;
+//            }
+//            else {
+                UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+                clusterAnnotationView.rightCalloutAccessoryView = rightButton;
+//            }
             
             CCHMapClusterAnnotation *clusterAnnotation = (CCHMapClusterAnnotation *)annotation;
             clusterAnnotationView.count = clusterAnnotation.annotations.count;
@@ -334,29 +359,16 @@ bool noDataFound = 0;
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control
 {
-    if ([view isKindOfClass:[MapAnnotationView class]]) {
-        MapAnnotation *annotation = ((MapAnnotation *)view.annotation);
-        [self performSegueWithIdentifier:@"showDetailAtPosition" sender:annotation];
-    }
-    
-    //    NSLog(@"Right button clicked");
-}
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
-//
-//    NSString *action = (__bridge NSString*)context;
-//
-//    if([action isEqualToString:@"ANSELECTED"]){
-//
-//        BOOL annotationAppeared = [[change valueForKey:@"new"] boolValue];
-//        if (annotationAppeared) {
-//            // clicked on an Annotation
+    if ([view isKindOfClass:[ClusterAnnotationView class]]) {
+        CCHMapClusterAnnotation *annotation = (CCHMapClusterAnnotation*)view.annotation;
+//        if (annotation.annotations.count == 1) {
+//            [self performSegueWithIdentifier:@"showDetailAtPosition" sender:annotation.annotations.allObjects.firstObject];
 //        }
 //        else {
-//            // Annotation disselected
+            [self performSegueWithIdentifier:@"showUsageStats" sender:annotation];
 //        }
-//    }
-//}
+    }
+}
 
 
 #pragma mark - Navigation
@@ -368,6 +380,44 @@ bool noDataFound = 0;
     if ([[segue identifier] isEqualToString:@"showDetailAtPosition"]) {
         UsageDetailInMapViewController *vc = [segue destinationViewController];
         vc.dataToDisplay = ((MapAnnotation *)sender).dataStorage;
+    }
+    else if([[segue identifier] isEqualToString:@"showUsageStats"]) {
+        UsageStatsTableViewController *vc = [segue destinationViewController];
+        [vc setNumberOfPoints:[[(CCHMapClusterAnnotation*)sender annotations]count]];
+        [vc setUniqueIdNumber:[(CCHMapClusterAnnotation*)sender uniqueIdNumber]];
+        // Calculate average
+        long aWifiSent = 0, aWifiReceived = 0, aWwanSent = 0, aWwanReceived = 0;
+        BOOL containStartPoint = false;
+        for (MapAnnotation* annotation in ((CCHMapClusterAnnotation*)sender).annotations.allObjects) {
+            if (annotation.averageDataUsage == nil) {
+                containStartPoint = 1;
+            }
+            else {
+                NSLog(@"WFR:@%@, WFS:%@, WWR:%@, WWS:%@",annotation.averageDataUsage[0],annotation.averageDataUsage[1],annotation.averageDataUsage[2],annotation.averageDataUsage[3]);
+                aWifiReceived += [(NSNumber*)annotation.averageDataUsage[0] longValue];
+                aWifiSent += [(NSNumber*)annotation.averageDataUsage[1] longValue];
+                aWwanReceived += [(NSNumber*)annotation.averageDataUsage[2] longValue];
+                aWwanSent += [(NSNumber*)annotation.averageDataUsage[3] longValue];
+            }
+        }
+        
+        if (containStartPoint) {
+            aWifiReceived = aWifiReceived / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]-1);
+            aWifiSent = aWifiSent / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]-1);
+            aWwanReceived = aWwanReceived / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]-1);
+            aWwanSent = aWwanSent / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]-1);
+        }
+        else {
+            aWifiReceived = aWifiReceived / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]);
+            aWifiSent = aWifiSent / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]);
+            aWwanReceived = aWwanReceived / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]);
+            aWwanSent = aWwanSent / ([((CCHMapClusterAnnotation*)sender).annotations.allObjects count]);
+        }
+        
+        NSLog(@"aWFR:@%li, aWFS:%li, aWWR:%li, aWWS:%li",aWifiReceived,aWifiSent,aWwanReceived,aWwanSent);
+        [vc setAverageDataUsage:[NSArray arrayWithObjects:
+                                 [NSNumber numberWithFloat:aWifiReceived],[NSNumber numberWithFloat:aWifiSent],
+                                 [NSNumber numberWithFloat:aWwanReceived],[NSNumber numberWithFloat:aWwanSent], nil]];
     }
     
 }
