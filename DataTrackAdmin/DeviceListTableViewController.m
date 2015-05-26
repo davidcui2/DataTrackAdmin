@@ -42,6 +42,7 @@
     if (self.choiceInMasterView) {
         // Initialize the refresh control.
         self.refreshControl = [[UIRefreshControl alloc] init];
+        self.refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Refreshing device lists..." attributes:[NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName]];
         self.refreshControl.backgroundColor = [UIColor purpleColor];
         self.refreshControl.tintColor = [UIColor whiteColor];
         [self.refreshControl addTarget:self

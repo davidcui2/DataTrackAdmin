@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="H1p-Uh-vWS">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="H1p-Uh-vWS">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -331,8 +331,19 @@
                             <constraint firstAttribute="bottomMargin" secondItem="rJF-Ek-KIq" secondAttribute="bottom" id="vpc-Pn-ILs"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="KfS-Np-nvj"/>
+                    <navigationItem key="navigationItem" id="KfS-Np-nvj">
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="CYa-b8-HAR">
+                            <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="4cR-1a-3gC">
+                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="clusterSwitchValueChanged:" destination="BsU-vr-Qaz" eventType="valueChanged" id="366-Jq-bPr"/>
+                                </connections>
+                            </switch>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="clusterSwitch" destination="4cR-1a-3gC" id="DaU-Wo-tRy"/>
                         <outlet property="mapView" destination="rJF-Ek-KIq" id="1qf-XC-Lm2"/>
                         <segue destination="Z39-vc-TYC" kind="show" identifier="showDetailAtPosition" id="pyH-Oc-aEA"/>
                         <segue destination="oHq-3B-7yf" kind="show" identifier="showUsageStats" id="jNH-QH-5ir"/>

@@ -18,6 +18,8 @@
 
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
 @property NSArray* selectedDeviceID;
+@property (strong, nonatomic) IBOutlet UISwitch *clusterSwitch;
+- (IBAction)clusterSwitchValueChanged:(id)sender;
 
 @property NSPredicate* datePredicate;
 

@@ -351,6 +351,9 @@ bool noDataFound = 0;
             clusterAnnotationView.uniqueLocation = clusterAnnotation.isUniqueLocation;
             return clusterAnnotationView;
         }
+        else if ([annotation isKindOfClass:MapAnnotation.class]) {
+            
+        }
 
         
         return nil;
@@ -423,4 +426,15 @@ bool noDataFound = 0;
 }
 
 
+- (IBAction)clusterSwitchValueChanged:(id)sender {
+    if (_clusterSwitch.on) {
+        [self.mapView removeAnnotations:_allAnnotations];
+        [self.mapClusterControllerRed addAnnotations:_allAnnotations withCompletionHandler:^(void){NSLog(@"Added to cluster controller");}];
+    }
+    else{
+        [self.mapClusterControllerRed removeAnnotations:_allAnnotations withCompletionHandler:^(void){NSLog(@"All annotations removed from cluster controller");}];
+        [self.mapView addAnnotations:_allAnnotations];
+    }
+
+}
 @end
